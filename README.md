@@ -1,36 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 農業管理システム
 
-## Getting Started
+効率的な農業経営のための統合管理システムです。農場、作物、作業記録、収穫記録を一元管理できます。
 
-First, run the development server:
+## 🌱 主な機能
+
+- **ダッシュボード**: 農場活動の統計情報を一目で確認
+- **農場管理**: 農場の登録・編集・削除
+- **作物管理**: 作物の植付から収穫までのライフサイクル管理
+- **作業記録**: 日々の農作業（水やり、施肥、除草など）の記録
+- **収穫記録**: 収穫量と品質の記録・管理
+
+## 🛠️ 技術スタック
+
+- **フロントエンド**: Next.js 15 (App Router), React 19, TypeScript
+- **スタイリング**: Tailwind CSS, Radix UI
+- **データベース**: Supabase (PostgreSQL)
+- **認証**: Supabase Auth
+- **アイコン**: Lucide React
+
+## 📋 データベース構造
+
+### テーブル概要
+
+1. **profiles** - ユーザープロフィール
+2. **farms** - 農場情報
+3. **crops** - 作物情報
+4. **work_records** - 作業記録
+5. **harvest_records** - 収穫記録
+
+### 主要な関連性
+
+- 農場 → 作物 → 作業記録・収穫記録
+- ユーザー → 農場所有者、作業者、収穫者
+
+## 🚀 セットアップ手順
+
+### 1. リポジトリのクローン
+
+```bash
+git clone <repository-url>
+cd agriculture-management-app
+```
+
+### 2. 依存関係のインストール
+
+```bash
+npm install
+```
+
+### 3. 環境変数の設定
+
+`.env.local` ファイルを作成し、以下の環境変数を設定してください：
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 4. データベースの設定
+
+Supabaseプロジェクトを作成し、以下のテーブルを作成してください。
+（マイグレーションスクリプトは `docs/database.sql` を参照）
+
+### 5. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 でアプリケーションにアクセスできます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📱 画面構成
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ダッシュボード (`/`)
+- 農場数、作物数、今週の作業・収穫の統計
+- クイックアクションボタン
+- 最近の活動表示
 
-## Learn More
+### 農場管理 (`/farms`)
+- 農場一覧表示
+- 新規農場の追加
+- 農場情報の編集・削除
 
-To learn more about Next.js, take a look at the following resources:
+### 作物管理 (`/crops`)
+- 作物一覧（ステータス別）
+- 新規作物の追加
+- 植付日・収穫予定日の管理
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 作業記録 (`/work-records`)
+- 作業記録一覧
+- 新規作業記録の追加
+- 作業種類別の管理
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 収穫記録 (`/harvest-records`)
+- 収穫記録一覧
+- 新規収穫記録の追加
+- 収穫量・品質の管理
 
-## Deploy on Vercel
+## 🎨 UIコンポーネント
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **レスポンシブデザイン**: モバイル・タブレット・デスクトップ対応
+- **直感的なナビゲーション**: 分かりやすいメニュー構造
+- **美しいカードレイアウト**: 情報を整理して表示
+- **ステータスバッジ**: 視覚的な状態表示
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔧 開発・デプロイ
+
+### ビルド
+
+```bash
+npm run build
+```
+
+### リント
+
+```bash
+npm run lint
+```
+
+### デプロイ
+
+Vercelへの自動デプロイが推奨されます：
+
+1. GitHubにプッシュ
+2. Vercelでプロジェクトをインポート
+3. 環境変数を設定
+4. 自動デプロイ完了
+
+## 📊 今後の拡張予定
+
+- **認証システム**: ユーザー登録・ログイン機能
+- **レポート機能**: PDF出力、グラフ表示
+- **天気情報連携**: 作業計画の最適化
+- **モバイルアプリ**: React Native版の開発
+- **AI機能**: 収穫予測、病害虫検知
+
+## 🤝 コントリビューション
+
+プルリクエストやイシューの報告を歓迎します。
+
+## 📄 ライセンス
+
+MIT License
+
+## 📞 サポート
+
+質問やサポートが必要な場合は、GitHubのIssuesをご利用ください。
+
+---
+
+**効率的な農業経営のためのデジタルソリューション** 🌾
