@@ -64,13 +64,8 @@ export default function FarmsPage() {
     e.preventDefault()
     
     try {
-      // 現在のユーザーIDを取得
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
-        alert('ログインが必要です')
-        return
-      }
+      // 一時的に固定のユーザーIDを使用（ログイン機能無効）
+      const tempUserId = 'temp-user-id'
 
       const { error } = await supabase
         .from('farms')
@@ -78,7 +73,7 @@ export default function FarmsPage() {
           name: formData.name,
           location: formData.location,
           area: parseFloat(formData.area),
-          owner_id: user.id
+          owner_id: tempUserId
         }])
 
       if (error) throw error

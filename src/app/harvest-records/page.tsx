@@ -37,18 +37,11 @@ interface Crop {
   variety: string | null
 }
 
-interface Profile {
-  id: string
-  name: string
-  email: string
-}
-
 type Quality = 'excellent' | 'good' | 'fair' | 'poor'
 
 export default function HarvestRecordsPage() {
   const [harvestRecords, setHarvestRecords] = useState<HarvestRecord[]>([])
   const [crops, setCrops] = useState<Crop[]>([])
-  const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
   const [formData, setFormData] = useState({
@@ -57,14 +50,12 @@ export default function HarvestRecordsPage() {
     quantity: '',
     unit: 'kg',
     quality: 'good' as Quality,
-    notes: '',
-    harvester_id: ''
+    notes: ''
   })
 
   useEffect(() => {
     fetchHarvestRecords()
     fetchCrops()
-    fetchProfiles()
   }, [])
 
   const fetchHarvestRecords = async () => {
@@ -109,24 +100,13 @@ export default function HarvestRecordsPage() {
     }
   }
 
-  const fetchProfiles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, name, email')
-        .order('name')
-
-      if (error) throw error
-      setProfiles(data || [])
-    } catch (error) {
-      console.error('プロフィールデータの取得に失敗しました:', error)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     try {
+      // 一時的に固定のハーベスターIDを使用
+      const tempHarvesterId = 'temp-harvester-id'
+
       const { error } = await supabase
         .from('harvest_records')
         .insert([{
@@ -136,7 +116,7 @@ export default function HarvestRecordsPage() {
           unit: formData.unit,
           quality: formData.quality,
           notes: formData.notes || null,
-          harvester_id: formData.harvester_id || null
+          harvester_id: tempHarvesterId
         }])
 
       if (error) throw error
@@ -148,8 +128,7 @@ export default function HarvestRecordsPage() {
         quantity: '',
         unit: 'kg',
         quality: 'good',
-        notes: '',
-        harvester_id: ''
+        notes: ''
       })
       setShowAddForm(false)
       
@@ -313,22 +292,6 @@ export default function HarvestRecordsPage() {
                         <option value="good">良好</option>
                         <option value="fair">普通</option>
                         <option value="poor">不良</option>
-                      </select>
-                    </div>
-                    <div>
-                      <Label htmlFor="harvester">収穫者</Label>
-                      <select
-                        id="harvester"
-                        value={formData.harvester_id}
-                        onChange={(e) => setFormData({...formData, harvester_id: e.target.value})}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                      >
-                        <option value="">選択してください</option>
-                        {profiles.map((profile) => (
-                          <option key={profile.id} value={profile.id}>
-                            {profile.name}
-                          </option>
-                        ))}
                       </select>
                     </div>
                     <div className="md:col-span-2">

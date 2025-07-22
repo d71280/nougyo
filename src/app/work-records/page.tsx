@@ -37,18 +37,11 @@ interface Crop {
   variety: string | null
 }
 
-interface Profile {
-  id: string
-  name: string
-  email: string
-}
-
 type WorkType = 'planting' | 'watering' | 'fertilizing' | 'pesticide' | 'harvesting' | 'weeding' | 'pruning' | 'other'
 
 export default function WorkRecordsPage() {
   const [workRecords, setWorkRecords] = useState<WorkRecord[]>([])
   const [crops, setCrops] = useState<Crop[]>([])
-  const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
   const [formData, setFormData] = useState({
@@ -57,14 +50,12 @@ export default function WorkRecordsPage() {
     description: '',
     work_date: new Date().toISOString().split('T')[0],
     hours_spent: '',
-    materials_used: '',
-    worker_id: ''
+    materials_used: ''
   })
 
   useEffect(() => {
     fetchWorkRecords()
     fetchCrops()
-    fetchProfiles()
   }, [])
 
   const fetchWorkRecords = async () => {
@@ -109,24 +100,13 @@ export default function WorkRecordsPage() {
     }
   }
 
-  const fetchProfiles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, name, email')
-        .order('name')
-
-      if (error) throw error
-      setProfiles(data || [])
-    } catch (error) {
-      console.error('プロフィールデータの取得に失敗しました:', error)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     try {
+      // 一時的に固定のワーカーIDを使用
+      const tempWorkerId = 'temp-worker-id'
+
       const { error } = await supabase
         .from('work_records')
         .insert([{
@@ -136,7 +116,7 @@ export default function WorkRecordsPage() {
           work_date: formData.work_date,
           hours_spent: formData.hours_spent ? parseFloat(formData.hours_spent) : null,
           materials_used: formData.materials_used || null,
-          worker_id: formData.worker_id || null
+          worker_id: tempWorkerId
         }])
 
       if (error) throw error
@@ -148,8 +128,7 @@ export default function WorkRecordsPage() {
         description: '',
         work_date: new Date().toISOString().split('T')[0],
         hours_spent: '',
-        materials_used: '',
-        worker_id: ''
+        materials_used: ''
       })
       setShowAddForm(false)
       
@@ -311,22 +290,6 @@ export default function WorkRecordsPage() {
                         value={formData.materials_used}
                         onChange={(e) => setFormData({...formData, materials_used: e.target.value})}
                       />
-                    </div>
-                    <div>
-                      <Label htmlFor="worker">作業者</Label>
-                      <select
-                        id="worker"
-                        value={formData.worker_id}
-                        onChange={(e) => setFormData({...formData, worker_id: e.target.value})}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                      >
-                        <option value="">選択してください</option>
-                        {profiles.map((profile) => (
-                          <option key={profile.id} value={profile.id}>
-                            {profile.name}
-                          </option>
-                        ))}
-                      </select>
                     </div>
                   </div>
                   <div className="flex gap-2">
