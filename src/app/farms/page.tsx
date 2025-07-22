@@ -23,27 +23,18 @@ interface Farm {
   } | null
 }
 
-interface Profile {
-  id: string
-  name: string
-  email: string
-}
-
 export default function FarmsPage() {
   const [farms, setFarms] = useState<Farm[]>([])
-  const [profiles, setProfiles] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     location: '',
-    area: '',
-    owner_id: ''
+    area: ''
   })
 
   useEffect(() => {
     fetchFarms()
-    fetchProfiles()
   }, [])
 
   const fetchFarms = async () => {
@@ -69,37 +60,31 @@ export default function FarmsPage() {
     }
   }
 
-  const fetchProfiles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, name, email')
-        .order('name')
-
-      if (error) throw error
-      setProfiles(data || [])
-    } catch (error) {
-      console.error('プロフィールデータの取得に失敗しました:', error)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     try {
+      // 現在のユーザーIDを取得
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (!user) {
+        alert('ログインが必要です')
+        return
+      }
+
       const { error } = await supabase
         .from('farms')
         .insert([{
           name: formData.name,
           location: formData.location,
           area: parseFloat(formData.area),
-          owner_id: formData.owner_id
+          owner_id: user.id
         }])
 
       if (error) throw error
 
       // フォームをリセット
-      setFormData({ name: '', location: '', area: '', owner_id: '' })
+      setFormData({ name: '', location: '', area: '' })
       setShowAddForm(false)
       
       // データを再取得
@@ -163,7 +148,7 @@ export default function FarmsPage() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <Label htmlFor="name">農場名</Label>
                       <Input
@@ -192,23 +177,6 @@ export default function FarmsPage() {
                         onChange={(e) => setFormData({...formData, area: e.target.value})}
                         required
                       />
-                    </div>
-                    <div>
-                      <Label htmlFor="owner">所有者</Label>
-                      <select
-                        id="owner"
-                        value={formData.owner_id}
-                        onChange={(e) => setFormData({...formData, owner_id: e.target.value})}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                        required
-                      >
-                        <option value="">選択してください</option>
-                        {profiles.map((profile) => (
-                          <option key={profile.id} value={profile.id}>
-                            {profile.name} ({profile.email})
-                          </option>
-                        ))}
-                      </select>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -255,9 +223,6 @@ export default function FarmsPage() {
                     </div>
                     <div className="text-sm">
                       <span className="font-medium">面積:</span> {farm.area} ヘクタール
-                    </div>
-                    <div className="text-sm">
-                      <span className="font-medium">所有者:</span> {farm.profiles?.name || '不明'}
                     </div>
                     <div className="text-xs text-gray-500">
                       作成日: {new Date(farm.created_at).toLocaleDateString('ja-JP')}
