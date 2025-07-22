@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Sprout, Home, Tractor, Calendar, BarChart3, Menu, X } from 'lucide-react'
+import { Sprout, Home, Tractor, Calendar, BarChart3, Menu, X, CloudRain } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -12,6 +12,7 @@ const navigationItems = [
   { name: '作物管理', href: '/crops', icon: Sprout },
   { name: '作業記録', href: '/work-records', icon: Calendar },
   { name: '収穫記録', href: '/harvest-records', icon: BarChart3 },
+  { name: '気象データ', href: '/weather', icon: CloudRain },
 ]
 
 export function Navigation() {

@@ -41,6 +41,8 @@ export type Database = {
           location: string
           area: number
           owner_id: string
+          latitude: number | null
+          longitude: number | null
           created_at: string
           updated_at: string
         }
@@ -50,6 +52,8 @@ export type Database = {
           location: string
           area: number
           owner_id: string
+          latitude?: number | null
+          longitude?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -59,6 +63,8 @@ export type Database = {
           location?: string
           area?: number
           owner_id?: string
+          latitude?: number | null
+          longitude?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -170,6 +176,56 @@ export type Database = {
           quality?: 'excellent' | 'good' | 'fair' | 'poor'
           notes?: string | null
           harvester_id?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      weather_data: {
+        Row: {
+          id: string
+          farm_id: string
+          date: string
+          max_temperature: number
+          min_temperature: number
+          rainfall: number
+          humidity: number | null
+          wind_speed: number | null
+          sunshine_hours: number | null
+          soil_temperature: number | null
+          weather_condition: string | null
+          pressure: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          farm_id: string
+          date: string
+          max_temperature: number
+          min_temperature: number
+          rainfall: number
+          humidity?: number | null
+          wind_speed?: number | null
+          sunshine_hours?: number | null
+          soil_temperature?: number | null
+          weather_condition?: string | null
+          pressure?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          farm_id?: string
+          date?: string
+          max_temperature?: number
+          min_temperature?: number
+          rainfall?: number
+          humidity?: number | null
+          wind_speed?: number | null
+          sunshine_hours?: number | null
+          soil_temperature?: number | null
+          weather_condition?: string | null
+          pressure?: number | null
           created_at?: string
           updated_at?: string
         }

@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Sprout, Tractor, BarChart3, Calendar } from 'lucide-react'
+import { Sprout, Tractor, BarChart3, Calendar, CloudRain } from 'lucide-react'
 
 interface DashboardStats {
   totalFarms: number
   totalCrops: number
   recentWork: number
   recentHarvest: number
+  weatherRecords: number
 }
 
 export default function Dashboard() {
@@ -19,7 +20,8 @@ export default function Dashboard() {
     totalFarms: 0,
     totalCrops: 0,
     recentWork: 0,
-    recentHarvest: 0
+    recentHarvest: 0,
+    weatherRecords: 0
   })
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -54,11 +56,18 @@ export default function Dashboard() {
         .select('*', { count: 'exact', head: true })
         .gte('harvest_date', weekAgo.toISOString().split('T')[0])
 
+      // 今週の気象データ数を取得
+      const { count: weatherCount } = await supabase
+        .from('weather_data')
+        .select('*', { count: 'exact', head: true })
+        .gte('date', weekAgo.toISOString().split('T')[0])
+
       setStats({
         totalFarms: farmCount || 0,
         totalCrops: cropCount || 0,
         recentWork: workCount || 0,
-        recentHarvest: harvestCount || 0
+        recentHarvest: harvestCount || 0,
+        weatherRecords: weatherCount || 0
       })
     } catch (error) {
       console.error('ダッシュボードデータの取得に失敗しました:', error)
@@ -78,11 +87,14 @@ export default function Dashboard() {
       case 'work':
         router.push('/work-records')
         break
-      case 'harvest':
-        router.push('/harvest-records')
-        break
-      default:
-        break
+                    case 'harvest':
+                router.push('/harvest-records')
+                break
+              case 'weather':
+                router.push('/weather')
+                break
+              default:
+                break
     }
   }
 
@@ -106,7 +118,7 @@ export default function Dashboard() {
           </div>
 
           {/* ダッシュボード統計 */}
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">
@@ -158,6 +170,19 @@ export default function Dashboard() {
                 <p className="text-xs text-gray-500">収穫記録数</p>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">
+                  気象データ
+                </CardTitle>
+                <CloudRain className="h-4 w-4 text-blue-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.weatherRecords}</div>
+                <p className="text-xs text-gray-500">今週の記録数</p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* クイックアクション */}
@@ -198,6 +223,14 @@ export default function Dashboard() {
                 >
                   <BarChart3 className="h-5 w-5 mr-3" />
                   収穫を記録
+                </Button>
+                <Button 
+                  className="w-full justify-start h-12" 
+                  variant="outline"
+                  onClick={() => handleQuickAction('weather')}
+                >
+                  <CloudRain className="h-5 w-5 mr-3" />
+                  気象データを確認
                 </Button>
               </CardContent>
             </Card>

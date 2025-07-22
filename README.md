@@ -9,6 +9,10 @@
 - **作物管理**: 作物の植付から収穫までのライフサイクル管理
 - **作業記録**: 日々の農作業（水やり、施肥、除草など）の記録
 - **収穫記録**: 収穫量と品質の記録・管理
+- **気象データ管理**: OpenWeatherMap APIを使用した気象情報の取得・管理
+  - 最高気温・最低気温・降雨量・湿度・風速の記録
+  - 日照時間の推定・地温の算出
+  - 5日間の天気予報表示
 
 ## 🛠️ 技術スタック
 
@@ -16,6 +20,8 @@
 - **スタイリング**: Tailwind CSS, Radix UI
 - **データベース**: Supabase (PostgreSQL)
 - **認証**: Supabase Auth
+- **気象API**: OpenWeatherMap API
+- **HTTPクライアント**: Axios
 - **アイコン**: Lucide React
 
 ## 📋 データベース構造
@@ -23,10 +29,11 @@
 ### テーブル概要
 
 1. **profiles** - ユーザープロフィール
-2. **farms** - 農場情報
+2. **farms** - 農場情報（緯度・経度を含む）
 3. **crops** - 作物情報
 4. **work_records** - 作業記録
 5. **harvest_records** - 収穫記録
+6. **weather_data** - 気象データ（気温、降雨量、湿度、風速など）
 
 ### 主要な関連性
 
@@ -55,7 +62,15 @@ npm install
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_WEATHER_API_KEY=your_openweathermap_api_key
 ```
+
+#### OpenWeatherMap APIキーの取得方法
+
+1. [OpenWeatherMap](https://openweathermap.org/api) にアクセス
+2. 無料アカウントを作成
+3. APIキーを取得（無料プランでは1日1000回まで利用可能）
+4. `.env.local` ファイルに追加
 
 ### 4. データベースの設定
 
@@ -91,6 +106,17 @@ http://localhost:3000 でアプリケーションにアクセスできます。
 - 作業記録一覧
 - 新規作業記録の追加
 - 作業種類別の管理
+
+### 収穫記録 (`/harvest-records`)
+- 収穫記録一覧
+- 新規収穫記録の追加
+- 収穫量と品質の管理
+
+### 気象データ管理 (`/weather`)
+- 農場別の気象データ取得
+- 5日間の天気予報表示
+- 気象記録履歴の確認
+- 気温、降雨量、湿度、風速、日照時間の表示
 
 ### 収穫記録 (`/harvest-records`)
 - 収穫記録一覧
